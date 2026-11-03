@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Patient health overview</h1>
+<p class="muted">Cleaned sample of {{ kpi.patients }} patients. All numbers and charts are computed by the Python backend with NumPy.</p>
+
+<section class="cards">
+  <div class="card"><div class="label">Patients</div><div class="value">{{ kpi.patients }}</div></div>
+  <div class="card"><div class="label">Average age</div><div class="value">{{ kpi.mean_age }}</div></div>
+  <div class="card"><div class="label">Average cholesterol</div><div class="value">{{ kpi.mean_cholesterol }}<span class="unit"> mg/dL</span></div></div>
+  <div class="card"><div class="label">Hypertension (Stage 1+)</div><div class="value">{{ kpi.hypertension_pct }}<span class="unit">%</span></div></div>
+  <div class="card"><div class="label">High-risk patients</div><div class="value">{{ kpi.high_risk_pct }}<span class="unit">%</span></div></div>
+  <div class="card"><div class="label">Smokers</div><div class="value">{{ kpi.smokers_pct }}<span class="unit">%</span></div></div>
+</section>
+
+<section class="panel">
+  <h2>Explore correlations</h2>
+  <p class="muted">Pick any two measurements to see a scatter plot with its trend line and correlation (r).</p>
+  <form method="get" class="inline">
+    <label>X axis
+      <select name="x" onchange="this.form.submit()">
+        {% for c in choices %}<option value="{{ c }}" {{ 'selected' if c == x else '' }}>{{ short[c] }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Y axis
+      <select name="y" onchange="this.form.submit()">
+        {% for c in choices %}<option value="{{ c }}" {{ 'selected' if c == y else '' }}>{{ short[c] }}</option>{% endfor %}
+      </select>
+    </label>
+  </form>
+  <img class="chart narrow" alt="Scatter plot of {{ short[y] }} against {{ short[x] }}"
+       src="{{ url_for('plot', name='scatter', x=x, y=y) }}">
+</section>
+
+<section class="panel">
+  <h2>Patient demographics</h2>
+  <img class="chart" alt="Age histogram and bar plots of gender, age group and blood group"
+       src="{{ url_for('plot', name='demographics') }}">
+</section>
+
+<section class="panel">
+  <h2>Health status</h2>
+  <img class="chart" alt="Bar plots of blood pressure, cholesterol and BMI categories"
+       src="{{ url_for('plot', name='health_status') }}">
+</section>
+
+<section class="panel">
+  <h2>Correlation heatmap</h2>
+  <img class="chart narrow" alt="Heatmap of correlations between measurements"
+       src="{{ url_for('plot', name='heatmap') }}">
+</section>
+{% endblock %}

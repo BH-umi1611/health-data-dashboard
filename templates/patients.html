@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Patients - Health Data Dashboard{% endblock %}
+{% block content %}
+<h1>Patient records</h1>
+<p class="muted">Filter and sort the cleaned records. Filtering is done in NumPy on the server.</p>
+
+<form method="get" class="filters panel">
+  <label>Min age
+    <input type="number" name="min_age" min="0" max="120" value="{{ f.min_age }}">
+  </label>
+  <label>Max age
+    <input type="number" name="max_age" min="0" max="120" value="{{ f.max_age }}">
+  </label>
+  <label>Gender
+    <select name="gender">
+      <option value="">All</option>
+      {% for g in ("Male", "Female") %}<option {{ 'selected' if f.gender == g else '' }}>{{ g }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Smoker
+    <select name="smoker">
+      <option value="">All</option>
+      {% for s in ("Yes", "No") %}<option {{ 'selected' if f.smoker == s else '' }}>{{ s }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Blood pressure
+    <select name="bp">
+      <option value="">All</option>
+      {% for b in bp_options %}<option {{ 'selected' if f.bp == b else '' }}>{{ b }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Sort by
+    <select name="sort">
+      {% for c in sortable %}<option value="{{ c }}" {{ 'selected' if f.sort == c else '' }}>{{ headers_map[c] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Order
+    <select name="order">
+      <option value="asc" {{ 'selected' if f.order != 'desc' else '' }}>Lowest first</option>
+      <option value="desc" {{ 'selected' if f.order == 'desc' else '' }}>Highest first</option>
+    </select>
+  </label>
+  <div class="actions">
+    <button type="submit">Apply</button>
+    <a class="button ghost" href="{{ url_for('patients') }}">Reset</a>
+  </div>
+</form>
+
+<p><strong>{{ matched }}</strong> of {{ total }} patients match{% if matched > shown %} (showing the first {{ shown }}){% endif %}.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+      {% else %}
+      <tr><td colspan="{{ headers|length }}" class="muted">No patients match these filters.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

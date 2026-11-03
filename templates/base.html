@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Health Data Dashboard{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap bar">
+      <span class="brand">Health Data Dashboard</span>
+      <nav>
+        <a href="{{ url_for('dashboard') }}" class="{{ 'on' if active == 'dashboard' else '' }}">Dashboard</a>
+        <a href="{{ url_for('patients') }}" class="{{ 'on' if active == 'patients' else '' }}">Patients</a>
+        <a href="{{ url_for('report') }}">Text report</a>
+        <a href="{{ url_for('api_summary') }}">JSON API</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="wrap muted small">
+    Synthetic data for learning only. Not medical advice.
+  </footer>
+</body>
+</html>
